@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎄Feliz Natal🎄 — História e Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Nunito", sans-serif;
+    color: #000;
+    background: linear-gradient(#5ba3e5, #1c5fa8);
+    overflow-x: hidden;
+  }
+
+  @keyframes snow {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+
+  .snowflake {
+    position: fixed;
+    top: -10px;
+    color: white;
+    font-size: 1em;
+    animation: snow 10s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 3;
+    max-width: 900px;
+    margin: 40px auto;
+    background: rgba(255,255,255,0.9);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  h1 {
+    font-family: "Mountains of Christmas", cursive;
+    text-align: center;
+    font-size: 50px;
+    color: #000;
+    margin-bottom: 15px;
+  }
+
+  h2 {
+    font-family: "Mountains of Christmas", cursive;
+    color: #000;
+  }
+
+  p {
+    line-height: 1.6;
+    color: #000;
+  }
+
+  .quiz {
+    background: #f8f8f8;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+  }
+
+  .quiz-question {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .opt {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  .opt:hover {
+    background: #f0f0f0;
+  }
+
+  .opt.selected {
+    border-color: #0b5b8a;
+    background: #e0f0ff;
+  }
+
+  .opt.correct {
+    background: #d6f5e0;
+    border-color: #2ca46a;
+  }
+
+  .opt.wrong {
+    background: #ffe6e6;
+    border-color: #d64545;
+  }
+
+  .buttons {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+  }
+
+  button {
+    background: #0b5b8a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #063a63;
+  }
+
+  #final-summary {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #000;
+  }
+</style>
+</head>
+<body>
+  <div id="snow-container"></div>
+
+  <div class="container">
+    <h1>🎄 Feliz Natal 🎄</h1>
+    <div class="story">
+      <h2>A história do Natal</h2>
+      <p>O Natal celebra o nascimento de Jesus Cristo, símbolo de amor, fé e esperança. Segundo os evangelhos, Maria e José viajaram até Belém, onde Jesus nasceu em uma simples manjedoura. Pastores e reis magos vieram visitá-lo, trazendo presentes que representavam realeza, espiritualidade e sacrifício: ouro, incenso e mirra.</p>
+      <p>Com o passar dos séculos, o Natal se tornou também uma celebração da família, da solidariedade e da generosidade. O personagem do Papai Noel surgiu inspirado em São Nicolau, um homem que ajudava os pobres e as crianças, e que se tornou símbolo da bondade natalina.</p>
+      <p>Hoje, o Natal é tanto uma festa religiosa quanto um tempo de união, onde lembramos que o nascimento de Jesus representa a luz que vence a escuridão e o amor que deve guiar nossos corações.</p>
+    </div>
+
+    <div class="quiz">
+      <h2>Quiz — Quanto você sabe sobre o Natal?</h2>
+      <div id="quiz-area"></div>
+      <div class="buttons">
+        <button id="submit-quiz">Finalizar</button>
+        <button id="reset-quiz">Refazer</button>
+      </div>
+      <div id="final-summary"></div>
+    </div>
+  </div>
+
+<script>
+/* Neve */
+const snowContainer = document.getElementById("snow-container");
+for(let i=0; i<50; i++){
+  const snowflake = document.createElement("div");
+  snowflake.classList.add("snowflake");
+  snowflake.textContent = "❄";
+  snowflake.style.left = Math.random() * 100 + "vw";
+  snowflake.style.fontSize = (Math.random() * 10 + 10) + "px";
+  snowflake.style.animationDuration = (Math.random() * 5 + 5) + "s";
+  snowflake.style.animationDelay = Math.random() * 5 + "s";
+  snowContainer.appendChild(snowflake);
+}
+
+/* Quiz */
+const quizData = [
+  {q:"O Natal comemora o nascimento de quem?", a:["São José","Jesus Cristo","São Pedro","Moisés"], c:1},
+  {q:"Onde Jesus nasceu?", a:["Jerusalém","Belém","Nazaré","Roma"], c:1},
+  {q:"Quem inspirou o Papai Noel?", a:["São Lucas","São Nicolau","São João","São Mateus"], c:1},
+  {q:"Qual é o principal significado do Natal?", a:["Festa das luzes","Nascimento de Jesus e amor ao próximo","Troca de presentes","Comer panetone"], c:1},
+  {q:"Quantos reis magos visitaram Jesus?", a:["Dois","Três","Quatro","Cinco"], c:1},
+];
+
+const quizArea = document.getElementById("quiz-area");
+
+function renderQuiz(){
+  quizArea.innerHTML = "";
+  quizData.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.classList.add("question-block");
+
+    const questionHTML = document.createElement("p");
+    questionHTML.classList.add("quiz-question");
+    questionHTML.textContent = `${i+1}. ${item.q}`;
+    div.appendChild(questionHTML);
+
+    item.a.forEach((optionText, j) => {
+      const opt = document.createElement("div");
+      opt.classList.add("opt");
+      opt.dataset.q = i;
+      opt.dataset.i = j;
+      opt.textContent = optionText;
+      opt.addEventListener("click", () => {
+        document.querySelectorAll(`.opt[data-q="${i}"]`).forEach(o => o.classList.remove("selected"));
+        opt.classList.add("selected");
+      });
+      div.appendChild(opt);
+    });
+
+    quizArea.appendChild(div);
+  });
+}
+
+document.getElementById("submit-quiz").addEventListener("click", () => {
+  let correct = 0;
+  quizData.forEach((item, i) => {
+    const selected = document.querySelector(`.opt[data-q="${i}"].selected`);
+    const all = document.querySelectorAll(`.opt[data-q="${i}"]`);
+    if(selected){
+      const choice = parseInt(selected.dataset.i);
+      all.forEach((opt, j) => {
+        opt.classList.remove("correct","wrong");
+        if(j === item.c) opt.classList.add("correct");
+        else if(opt.classList.contains("selected")) opt.classList.add("wrong");
+      });
+      if(choice === item.c) correct++;
+    }
+  });
+  document.getElementById("final-summary").textContent = `🎁 Você acertou ${correct}/${quizData.length} perguntas!`;
+});
+
+document.getElementById("reset-quiz").addEventListener("click", renderQuiz);
+
+renderQuiz();
+</script>
+</body>
+</html>
